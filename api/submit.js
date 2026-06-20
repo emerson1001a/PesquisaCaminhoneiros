@@ -16,6 +16,18 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  let supabaseRestUrl;
+  try {
+    supabaseRestUrl = new URL(`/rest/v1/${TABLE_NAME}`, supabaseUrl).toString();
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      erro: "SUPABASE_URL invalida na Vercel.",
+      detalhe: error.message,
+      supabase_url_recebida: supabaseUrl || ""
+    });
+  }
+
   const body = req.body || {};
   const payload = {
     origem: body.origem || "link_publico",
@@ -26,7 +38,7 @@ module.exports = async function handler(req, res) {
   };
 
   try {
-    const response = await fetch(`${supabaseUrl}/rest/v1/${TABLE_NAME}`, {
+    const response = await fetch(supabaseRestUrl, {
       method: "POST",
       headers: {
         apikey: supabaseKey,
@@ -49,7 +61,16 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({
       ok: false,
-      erro: error.message || "Erro inesperado ao salvar."
+      erro: error.message || "Erro inesperado ao salvar.",
+      causa: error.cause?.message || "",
+      supabase_host: (() => {
+        try {
+          return new URL(supabaseUrl).host;
+        } catch {
+          return "";
+        }
+      })(),
+      chave_configurada: Boolean(supabaseKey)
     });
   }
 };
