@@ -1,6 +1,4 @@
-const SUPABASE_URL = "https://waaqveplibjfzfymdqrr.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_VHbopyWWAkzqXbP7j_2mlg__NDtt0NP";
-const TABLE_NAME = "respostas_pesquisa_caminhoneiros";
+const SUBMIT_URL = "/api/submit";
 
 const questions = [
   {
@@ -287,28 +285,18 @@ async function sendAnswers() {
     origem: "link_publico"
   };
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    localStorage.setItem(`pesquisa-caminhoneiros-${Date.now()}`, JSON.stringify(payload));
-    return { savedLocally: true };
-  }
-
-  const headers = {
-    apikey: SUPABASE_ANON_KEY,
-    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-    "Content-Type": "application/json",
-    Prefer: "return=minimal"
-  };
-
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
+  const response = await fetch(SUBMIT_URL, {
     method: "POST",
-    headers,
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify(payload)
   });
 
   if (!response.ok) {
     const text = await response.text();
     localStorage.setItem(`pesquisa-caminhoneiros-pendente-${Date.now()}`, JSON.stringify(payload));
-    throw new Error(`Supabase ${response.status}: ${text || "Erro ao salvar resposta."}`);
+    throw new Error(`Servidor ${response.status}: ${text || "Erro ao salvar resposta."}`);
   }
 
   return { savedLocally: false };

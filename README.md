@@ -14,15 +14,10 @@ Pagina simples para coletar respostas de caminhoneiros sobre calculadora de fret
 1. Crie um projeto no Supabase.
 2. Abra `SQL Editor`.
 3. Cole e execute o conteudo de `supabase.sql`.
-4. Copie:
-   - Project URL
-   - anon/public key
-5. Abra `app.js` e preencha:
-
-```js
-const SUPABASE_URL = "https://seu-projeto.supabase.co";
-const SUPABASE_ANON_KEY = "sua-chave-anon";
-```
+4. Copie o `Project URL`.
+5. Copie uma chave para a Vercel:
+   - preferencial: `service_role`, por ficar apenas no servidor da Vercel
+   - alternativa: `anon/public`
 
 ## Publicar na Vercel
 
@@ -37,9 +32,20 @@ Build Command: vazio
 Output Directory: vazio
 ```
 
+Variaveis de ambiente na Vercel:
+
+```txt
+SUPABASE_URL=https://seu-projeto.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=sua-chave-service-role
+```
+
+Se nao usar `service_role`, configure:
+
+```txt
+SUPABASE_ANON_KEY=sua-chave-anon-ou-publishable
+```
+
 ## Teste local
 
 Abrir `index.html` no navegador ja funciona para ver a tela.
-Para salvar no banco, precisa configurar Supabase em `app.js`.
-
-Se o Supabase nao estiver configurado, a pagina salva a resposta no navegador apenas como fallback de teste local.
+Para salvar no banco, publique na Vercel e configure as variaveis de ambiente.
