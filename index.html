@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pesquisa com Caminhoneiros</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="page">
+    <section class="intro" id="intro">
+      <div class="brand">Rode com Lucro</div>
+      <h1>Pesquisa rápida com caminhoneiros</h1>
+      <p>
+        Queremos entender melhor a vida real da estrada e o que pesa na hora de aceitar um frete.
+        Não tem resposta certa ou errada. É rapidinho.
+      </p>
+      <div class="meta">
+        <span>Leva cerca de 3 minutos</span>
+        <span>Respostas anônimas</span>
+      </div>
+      <button class="primary" type="button" id="startButton">Começar</button>
+    </section>
+
+    <form class="survey hidden" id="surveyForm">
+      <header class="surveyHeader">
+        <div>
+          <span class="brand small">Rode com Lucro</span>
+          <h2 id="questionTitle">Pergunta</h2>
+        </div>
+        <strong id="progressText">1/15</strong>
+      </header>
+
+      <div class="progress">
+        <div class="progressBar" id="progressBar"></div>
+      </div>
+
+      <section class="questionCard" id="questionCard"></section>
+
+      <div class="navigation">
+        <button class="secondary" type="button" id="backButton">Voltar</button>
+        <button class="primary" type="button" id="nextButton">Continuar</button>
+      </div>
+    </form>
+
+    <section class="thanks hidden" id="thanks">
+      <div class="brand">Rode com Lucro</div>
+      <h1>Obrigado pela ajuda!</h1>
+      <p>
+        Sua resposta ajuda a criar soluções mais úteis para quem vive da estrada.
+      </p>
+      <button class="secondary" type="button" id="againButton">Responder de novo</button>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
