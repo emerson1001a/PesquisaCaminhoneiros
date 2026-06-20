@@ -154,7 +154,7 @@ const questions = [
   },
   {
     id: "contato",
-    text: "Se quiser, deixe seu nome e WhatsApp para conversarmos depois.",
+    text: "Quer participar dos primeiros testes do Rode com Lucro?",
     type: "contact",
     optional: true
   }
@@ -211,6 +211,16 @@ function renderQuestion() {
   if (question.type === "contact") {
     const contato = answers[question.id] || {};
     questionCard.innerHTML = `
+      <div class="contactInvite">
+        <strong>Sua resposta pode ajudar caminhoneiros de todo o Brasil.</strong>
+        <p>
+          Deixe seu nome e WhatsApp se quiser ser chamado para testar a ferramenta quando ela estiver pronta:
+          uma ajuda para encontrar fretes, calcular se a viagem vale a pena e tomar decisões com mais segurança.
+        </p>
+        <p>
+          Quem participar agora pode entrar no grupo dos primeiros motoristas convidados para usar e melhorar o Rode com Lucro.
+        </p>
+      </div>
       <div class="field">
         <label for="nome">Nome</label>
         <input id="nome" autocomplete="name" placeholder="Ex.: Paulo" value="${contato.nome || ""}">
@@ -218,7 +228,7 @@ function renderQuestion() {
       <div class="field" style="margin-top:14px">
         <label for="whatsapp">WhatsApp</label>
         <input id="whatsapp" inputmode="tel" autocomplete="tel" placeholder="Ex.: (11) 99999-9999" value="${contato.whatsapp || ""}">
-        <span class="hint">Essa parte é opcional.</span>
+        <span class="hint">Opcional. Usaremos apenas para convidar você para testes e novidades do Rode com Lucro.</span>
       </div>
     `;
     const saveContact = () => {
