@@ -310,7 +310,7 @@ async function sendAnswers() {
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || "Erro ao salvar resposta.");
+    throw new Error(`Supabase ${response.status}: ${text || "Erro ao salvar resposta."}`);
   }
 
   return { savedLocally: false };
@@ -351,7 +351,7 @@ nextButton.addEventListener("click", async () => {
   } catch (error) {
     sending = false;
     renderQuestion();
-    showError("Não consegui salvar agora. Tente novamente em alguns segundos.");
+    showError(`Não consegui salvar agora. Detalhe: ${error.message}`);
     console.error("Erro ao enviar pesquisa:", error);
   }
 });
