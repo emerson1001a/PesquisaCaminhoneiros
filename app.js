@@ -294,13 +294,10 @@ async function sendAnswers() {
 
   const headers = {
     apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     "Content-Type": "application/json",
     Prefer: "return=minimal"
   };
-
-  if (!SUPABASE_ANON_KEY.startsWith("sb_publishable_")) {
-    headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
-  }
 
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
     method: "POST",
@@ -310,6 +307,7 @@ async function sendAnswers() {
 
   if (!response.ok) {
     const text = await response.text();
+    localStorage.setItem(`pesquisa-caminhoneiros-pendente-${Date.now()}`, JSON.stringify(payload));
     throw new Error(`Supabase ${response.status}: ${text || "Erro ao salvar resposta."}`);
   }
 
@@ -351,7 +349,7 @@ nextButton.addEventListener("click", async () => {
   } catch (error) {
     sending = false;
     renderQuestion();
-    showError(`Não consegui salvar agora. Detalhe: ${error.message}`);
+    showError(`Não consegui enviar ao banco agora. Guardei uma cópia neste aparelho. Detalhe: ${error.message}`);
     console.error("Erro ao enviar pesquisa:", error);
   }
 });
