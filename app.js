@@ -292,14 +292,19 @@ async function sendAnswers() {
     return { savedLocally: true };
   }
 
+  const headers = {
+    apikey: SUPABASE_ANON_KEY,
+    "Content-Type": "application/json",
+    Prefer: "return=minimal"
+  };
+
+  if (!SUPABASE_ANON_KEY.startsWith("sb_publishable_")) {
+    headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
+  }
+
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
     method: "POST",
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal"
-    },
+    headers,
     body: JSON.stringify(payload)
   });
 
