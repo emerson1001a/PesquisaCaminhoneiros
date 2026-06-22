@@ -2,6 +2,15 @@ const SUBMIT_URL = "/api/submit";
 
 const questions = [
   {
+    id: "perfil_motorista",
+    text: "Você é:",
+    options: [
+      "Autônomo",
+      "Empregado",
+      "Transportadora"
+    ]
+  },
+  {
     id: "primeiro_olhar",
     text: "Quando aparece um frete novo, qual é a primeira coisa que você olha?",
     options: [
