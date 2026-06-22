@@ -53,16 +53,6 @@ const questions = [
     ]
   },
   {
-    id: "serra",
-    text: "Subida de serra pesa muito no resultado do frete?",
-    options: [
-      "Sim, pesa muito",
-      "Pesa um pouco",
-      "Só quando é trecho longo",
-      "Quase não considero"
-    ]
-  },
-  {
     id: "retorno",
     text: "Como você lida com carga de retorno?",
     options: [
@@ -162,15 +152,13 @@ function renderQuestion() {
     const contato = answers[question.id] || {};
     questionCard.innerHTML = `
       <div class="contactInvite">
-        <strong>Entre no grupo dos primeiros motoristas convidados.</strong>
+        <strong>Quer acompanhar o projeto?</strong>
         <p>
-          O Rode com Lucro está sendo criado para ajudar o caminhoneiro a encontrar fretes,
-          calcular se a viagem vale a pena e negociar com mais informação na mão.
+          Sua resposta já ajudou. Se quiser, deixe seu WhatsApp para receber novidades e testar
+          o Rode com Lucro quando abrirmos para motoristas.
         </p>
         <p>
-          Deixe seu nome e WhatsApp para ser avisado quando abrirmos os testes.
-          Nossa intenção é oferecer aos primeiros participantes um período gratuito de uso,
-          como agradecimento por ajudarem a construir uma ferramenta para a estrada brasileira.
+          Não é obrigatório. O contato serve só para chamar quem quiser participar dos próximos passos.
         </p>
       </div>
       <div class="field">
@@ -180,7 +168,7 @@ function renderQuestion() {
       <div class="field" style="margin-top:14px">
         <label for="whatsapp">WhatsApp</label>
         <input id="whatsapp" inputmode="tel" autocomplete="tel" placeholder="Ex.: (11) 99999-9999" value="${contato.whatsapp || ""}">
-        <span class="hint">Opcional. Usaremos apenas para convidar você para os testes e novidades do Rode com Lucro.</span>
+        <span class="hint">Opcional. Use apenas se quiser receber o convite.</span>
       </div>
     `;
     const saveContact = () => {
