@@ -43,17 +43,6 @@ const questions = [
     ]
   },
   {
-    id: "custo_dificil",
-    text: "Qual custo você acha mais difícil de prever?",
-    options: [
-      "Diesel",
-      "Manutenção",
-      "Tempo parado",
-      "Volta vazia",
-      "Depreciação do caminhão"
-    ]
-  },
-  {
     id: "diesel_decisao",
     text: "O preço do diesel muda sua decisão de aceitar um frete?",
     options: [
@@ -84,26 +73,6 @@ const questions = [
     ]
   },
   {
-    id: "sobrou_menos",
-    text: "Já aconteceu de fechar um frete e sobrar muito menos do que esperava?",
-    options: [
-      "Sim, muitas vezes",
-      "Sim, algumas vezes",
-      "Poucas vezes",
-      "Quase nunca"
-    ]
-  },
-  {
-    id: "atrapalha_lucro",
-    text: "O que mais atrapalha o lucro depois que o frete já foi fechado?",
-    options: [
-      "Gasto extra na estrada",
-      "Espera para carregar ou descarregar",
-      "Pedágio maior que o previsto",
-      "Rota pior do que parecia"
-    ]
-  },
-  {
     id: "info_falta",
     text: "Qual informação mais costuma faltar em um frete?",
     options: [
@@ -111,17 +80,6 @@ const questions = [
       "Pedágio ou rota",
       "Tempo de carga e descarga",
       "Condição de pagamento"
-    ]
-  },
-  {
-    id: "recebe_fretes",
-    text: "Como você normalmente recebe fretes?",
-    options: [
-      "WhatsApp",
-      "Transportadora",
-      "Agenciador",
-      "Cliente direto",
-      "Fretebras"
     ]
   },
   {
@@ -135,16 +93,6 @@ const questions = [
     ]
   },
   {
-    id: "confianca",
-    text: "O que faria você confiar numa ferramenta para calcular frete?",
-    options: [
-      "Mostrar os custos usados",
-      "Ser fácil e rápida",
-      "Permitir mudar os valores",
-      "Ter sido indicada por outro caminhoneiro"
-    ]
-  },
-  {
     id: "ajuda_antes",
     text: "O que mais te ajudaria antes de aceitar um frete?",
     options: [
@@ -153,13 +101,6 @@ const questions = [
       "Saber se tem retorno",
       "Saber se a rota é pesada"
     ]
-  },
-  {
-    id: "comentario",
-    text: "Quer comentar alguma coisa que não apareceu nas perguntas?",
-    type: "textarea",
-    optional: true,
-    placeholder: "Escreva aqui, se quiser."
   },
   {
     id: "contato",
@@ -221,13 +162,15 @@ function renderQuestion() {
     const contato = answers[question.id] || {};
     questionCard.innerHTML = `
       <div class="contactInvite">
-        <strong>Sua resposta pode ajudar caminhoneiros de todo o Brasil.</strong>
+        <strong>Entre no grupo dos primeiros motoristas convidados.</strong>
         <p>
-          Deixe seu nome e WhatsApp se quiser ser chamado para testar a ferramenta quando ela estiver pronta:
-          uma ajuda para encontrar fretes, calcular se a viagem vale a pena e tomar decisões com mais segurança.
+          O Rode com Lucro está sendo criado para ajudar o caminhoneiro a encontrar fretes,
+          calcular se a viagem vale a pena e negociar com mais informação na mão.
         </p>
         <p>
-          Quem participar agora pode entrar no grupo dos primeiros motoristas convidados para usar e melhorar o Rode com Lucro.
+          Deixe seu nome e WhatsApp para ser avisado quando abrirmos os testes.
+          Nossa intenção é oferecer aos primeiros participantes um período gratuito de uso,
+          como agradecimento por ajudarem a construir uma ferramenta para a estrada brasileira.
         </p>
       </div>
       <div class="field">
@@ -237,7 +180,7 @@ function renderQuestion() {
       <div class="field" style="margin-top:14px">
         <label for="whatsapp">WhatsApp</label>
         <input id="whatsapp" inputmode="tel" autocomplete="tel" placeholder="Ex.: (11) 99999-9999" value="${contato.whatsapp || ""}">
-        <span class="hint">Opcional. Usaremos apenas para convidar você para testes e novidades do Rode com Lucro.</span>
+        <span class="hint">Opcional. Usaremos apenas para convidar você para os testes e novidades do Rode com Lucro.</span>
       </div>
     `;
     const saveContact = () => {
