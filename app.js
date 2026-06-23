@@ -503,8 +503,11 @@ nextButton.addEventListener("click", async () => {
 });
 
 againButton.addEventListener("click", () => {
-  current = 0;
-  answers = {};
-  sending = false;
-  showScreen("intro");
+  const message = [
+    "Pesquisa rápida do Rode com Lucro:",
+    "ajude a entender a estrada de verdade e fortalecer quem vive do frete.",
+    window.location.origin
+  ].join("\n\n");
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
 });
