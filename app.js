@@ -179,16 +179,86 @@ const shipperQuestions = [
   }
 ];
 
+const employeeQuestions = [
+  {
+    id: "empregado_decide_viagem",
+    text: "Você tem liberdade para decidir algo na viagem?",
+    options: [
+      "Escolho rota",
+      "Escolho onde abastecer",
+      "Escolho paradas",
+      "Só sigo orientação da empresa"
+    ]
+  },
+  {
+    id: "empregado_ajuda_estrada",
+    text: "O que mais te ajudaria na estrada?",
+    options: [
+      "Combustível mais barato",
+      "Parada boa e segura",
+      "Rota melhor",
+      "Informação mais clara da viagem"
+    ]
+  },
+  {
+    id: "empregado_interesse_ferramenta",
+    text: "Se existisse uma ferramenta simples para ajudar motoristas na estrada, você gostaria de receber?",
+    options: [
+      "Sim, pelo WhatsApp",
+      "Sim, por aplicativo",
+      "Talvez",
+      "Não tenho interesse"
+    ]
+  }
+];
+
 const driverQuestions = questions.slice(1, -1);
 const contactQuestion = questions[questions.length - 1];
+const autonomousOpenQuestion = {
+  id: "comentario_autonomo",
+  text: "Quer contar qual é a maior dificuldade para conseguir bons fretes e ganhar melhor na estrada?",
+  type: "textarea",
+  optional: true,
+  placeholder: "Ex.: frete baixo, falta de retorno, diesel caro, pedágio, espera, pouca informação..."
+};
+const employeeOpenQuestion = {
+  id: "comentario_empregado",
+  text: "Quer contar o que mais atrapalha seu dia a dia na estrada?",
+  type: "textarea",
+  optional: true,
+  placeholder: "Ex.: rota ruim, parada insegura, espera, informação incompleta..."
+};
+const shipperOpenQuestion = {
+  id: "comentario_transportadora",
+  text: "Quer contar qual é a maior dificuldade para fechar fretes com bons motoristas?",
+  type: "textarea",
+  optional: true,
+  placeholder: "Ex.: demora para responder, confiança, documentação, preço..."
+};
 
 function getActiveQuestions() {
-  const branch = answers.perfil_motorista === "Transportadora" ? shipperQuestions : driverQuestions;
+  let branch = [...driverQuestions, autonomousOpenQuestion];
+
+  if (answers.perfil_motorista === "Empregado") {
+    branch = [...employeeQuestions, employeeOpenQuestion];
+  }
+
+  if (answers.perfil_motorista === "Transportadora") {
+    branch = [...shipperQuestions, shipperOpenQuestion];
+  }
+
   return [questions[0], ...branch, contactQuestion];
 }
 
 function clearBranchAnswers() {
-  [...driverQuestions, ...shipperQuestions].forEach((question) => {
+  [
+    ...driverQuestions,
+    autonomousOpenQuestion,
+    ...employeeQuestions,
+    employeeOpenQuestion,
+    ...shipperQuestions,
+    shipperOpenQuestion
+  ].forEach((question) => {
     delete answers[question.id];
   });
 }
@@ -325,9 +395,15 @@ function validateCurrent() {
 
 async function sendAnswers() {
   const contato = answers.contato || {};
+  const comentario =
+    answers.comentario_autonomo ||
+    answers.comentario_empregado ||
+    answers.comentario_transportadora ||
+    answers.comentario ||
+    "";
   const payload = {
     respostas: answers,
-    comentario: answers.comentario || "",
+    comentario,
     nome: contato.nome || "",
     whatsapp: contato.whatsapp || "",
     origem: "link_publico"
