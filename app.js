@@ -100,6 +100,99 @@ const questions = [
   }
 ];
 
+const shipperQuestions = [
+  {
+    id: "transportadora_dificuldade",
+    text: "Qual é a maior dificuldade ao contratar motorista para um frete?",
+    options: [
+      "Encontrar motorista disponível",
+      "Confiar no motorista",
+      "Negociar valor",
+      "Documentação e regras",
+      "Agilidade para fechar"
+    ]
+  },
+  {
+    id: "transportadora_encontra_motoristas",
+    text: "Como vocês normalmente encontram motoristas?",
+    options: [
+      "WhatsApp",
+      "Indicação",
+      "Agenciador",
+      "Plataformas de frete",
+      "Base própria de motoristas"
+    ]
+  },
+  {
+    id: "transportadora_atraso",
+    text: "O que mais atrasa o fechamento de um frete?",
+    options: [
+      "Motorista demorando para responder",
+      "Falta de informação do frete",
+      "Negociação de preço",
+      "Documentação",
+      "Não encontrar motorista na rota"
+    ]
+  },
+  {
+    id: "transportadora_confianca",
+    text: "O que faria você confiar mais em um motorista novo?",
+    options: [
+      "Histórico de fretes",
+      "Avaliação de outros contratantes",
+      "Documentos verificados",
+      "Indicação de alguém conhecido",
+      "Contato direto e rápido"
+    ]
+  },
+  {
+    id: "transportadora_utilidade",
+    text: "O que seria mais útil para sua operação?",
+    options: [
+      "Publicar fretes rapidamente",
+      "Receber motoristas interessados",
+      "Ver motoristas por rota ou região",
+      "Organizar contatos no WhatsApp",
+      "Comparar motoristas por histórico ou reputação"
+    ]
+  },
+  {
+    id: "transportadora_whatsapp",
+    text: "Hoje, o WhatsApp ajuda ou atrapalha a operação?",
+    options: [
+      "Ajuda muito",
+      "Ajuda, mas fica bagunçado",
+      "Atrapalha pela quantidade de mensagens",
+      "Preferia uma ferramenta organizada"
+    ]
+  },
+  {
+    id: "transportadora_valor_plataforma",
+    text: "Qual seria o maior valor de uma plataforma para transportadoras?",
+    options: [
+      "Fechar fretes mais rápido",
+      "Reduzir risco com motorista",
+      "Organizar a operação",
+      "Diminuir dependência de agenciador",
+      "Ter histórico e controle"
+    ]
+  }
+];
+
+const driverQuestions = questions.slice(1, -1);
+const contactQuestion = questions[questions.length - 1];
+
+function getActiveQuestions() {
+  const branch = answers.perfil_motorista === "Transportadora" ? shipperQuestions : driverQuestions;
+  return [questions[0], ...branch, contactQuestion];
+}
+
+function clearBranchAnswers() {
+  [...driverQuestions, ...shipperQuestions].forEach((question) => {
+    delete answers[question.id];
+  });
+}
+
 const intro = document.getElementById("intro");
 const thanks = document.getElementById("thanks");
 const form = document.getElementById("surveyForm");
@@ -123,8 +216,9 @@ function showScreen(screen) {
 }
 
 function renderQuestion() {
-  const question = questions[current];
-  const total = questions.length;
+  const activeQuestions = getActiveQuestions();
+  const question = activeQuestions[current];
+  const total = activeQuestions.length;
   const value = answers[question.id] || "";
 
   questionTitle.textContent = question.text;
@@ -150,12 +244,13 @@ function renderQuestion() {
 
   if (question.type === "contact") {
     const contato = answers[question.id] || {};
+    const isShipper = answers.perfil_motorista === "Transportadora";
     questionCard.innerHTML = `
       <div class="contactInvite">
         <strong>Quer acompanhar o projeto?</strong>
         <p>
           Sua resposta já ajudou. Se quiser, deixe seu WhatsApp para receber novidades e testar
-          o Rode com Lucro quando abrirmos para motoristas.
+          o Rode com Lucro quando abrirmos para ${isShipper ? "transportadoras" : "motoristas"}.
         </p>
         <p>
           Não é obrigatório. O contato serve só para chamar quem quiser participar dos próximos passos.
@@ -200,6 +295,9 @@ function renderQuestion() {
 
   questionCard.querySelectorAll("input").forEach((input) => {
     input.addEventListener("change", () => {
+      if (question.id === "perfil_motorista" && answers[question.id] !== input.value) {
+        clearBranchAnswers();
+      }
       answers[question.id] = input.value;
       clearError();
     });
@@ -220,7 +318,7 @@ function clearError() {
 }
 
 function validateCurrent() {
-  const question = questions[current];
+  const question = getActiveQuestions()[current];
   if (question.optional) return true;
   return Boolean(answers[question.id]);
 }
@@ -270,7 +368,7 @@ nextButton.addEventListener("click", async () => {
     return;
   }
 
-  if (current < questions.length - 1) {
+  if (current < getActiveQuestions().length - 1) {
     current += 1;
     clearError();
     renderQuestion();
