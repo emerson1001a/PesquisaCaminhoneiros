@@ -256,6 +256,132 @@ p {
   display: none;
 }
 
+.adminPage {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.adminHeader,
+.adminLogin,
+.adminPanel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  margin-top: 18px;
+  padding: 22px;
+}
+
+.adminHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.adminHeader h1 {
+  font-size: 36px;
+  margin-bottom: 6px;
+}
+
+.linkButton {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 120px;
+  text-decoration: none;
+}
+
+.adminLogin {
+  max-width: 520px;
+}
+
+.adminLogin .primary {
+  margin-top: 16px;
+}
+
+.summaryGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.summaryGrid article {
+  background: #fffdf8;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.summaryGrid span {
+  color: var(--muted);
+  display: block;
+  font-size: 14px;
+}
+
+.summaryGrid strong {
+  display: block;
+  font-size: 30px;
+  margin-top: 6px;
+}
+
+.adminToolbar {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr auto auto;
+  margin: 18px 0;
+}
+
+.adminToolbar input {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffdf8;
+  min-height: 46px;
+  padding: 0 14px;
+}
+
+.tableWrap {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: auto;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 980px;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--line);
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #eee5db;
+  font-size: 13px;
+}
+
+td {
+  background: #fffdf8;
+  font-size: 14px;
+}
+
+td pre {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.emptyCell {
+  color: var(--muted);
+  text-align: center;
+}
+
 @media (max-width: 560px) {
   .page {
     padding: 10px;
@@ -289,5 +415,22 @@ p {
   .primary,
   .secondary {
     flex: 1;
+  }
+
+  .adminPage {
+    padding: 10px;
+  }
+
+  .adminHeader {
+    display: block;
+  }
+
+  .adminHeader h1 {
+    font-size: 30px;
+  }
+
+  .summaryGrid,
+  .adminToolbar {
+    grid-template-columns: 1fr;
   }
 }

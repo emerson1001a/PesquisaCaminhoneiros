@@ -5,8 +5,10 @@ Pagina simples para coletar respostas de caminhoneiros sobre calculadora de fret
 ## Arquivos
 
 - `index.html`: pagina da pesquisa
+- `admin.html`: painel simples para acompanhar respostas
 - `styles.css`: visual da pesquisa
 - `app.js`: perguntas, navegacao e envio para o Supabase
+- `admin.js`: listagem, busca e exportacao CSV do painel
 - `supabase.sql`: tabela e seguranca no Supabase
 
 ## Configurar Supabase
@@ -37,13 +39,16 @@ Variaveis de ambiente na Vercel:
 ```txt
 SUPABASE_URL=https://seu-projeto.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=sua-chave-service-role
+ADMIN_TOKEN=uma-senha-forte-para-o-painel
 ```
 
-Se nao usar `service_role`, configure:
+Para o envio publico da pesquisa, se nao usar `service_role`, configure:
 
 ```txt
 SUPABASE_ANON_KEY=sua-chave-anon-ou-publishable
 ```
+
+O painel `/admin.html` precisa de `SUPABASE_SERVICE_ROLE_KEY`, porque a leitura publica das respostas fica bloqueada no Supabase.
 
 ## Teste local
 

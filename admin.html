@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin - Pesquisa Rode com Lucro</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="adminPage">
+    <header class="adminHeader">
+      <div>
+        <div class="brand">Rode com Lucro</div>
+        <h1>Respostas da pesquisa</h1>
+        <p>Acompanhe as respostas recebidas e exporte para CSV.</p>
+      </div>
+      <a class="secondary linkButton" href="./">Ver pesquisa</a>
+    </header>
+
+    <section class="adminLogin" id="adminLogin">
+      <h2>Acesso administrativo</h2>
+      <p>Digite a senha de administrador para carregar as respostas.</p>
+      <div class="field">
+        <label for="adminToken">Senha</label>
+        <input id="adminToken" type="password" autocomplete="current-password" placeholder="Senha do painel">
+      </div>
+      <button class="primary" type="button" id="loadButton">Entrar</button>
+      <div class="error hidden" id="adminError"></div>
+    </section>
+
+    <section class="adminPanel hidden" id="adminPanel">
+      <div class="summaryGrid">
+        <article>
+          <span>Total</span>
+          <strong id="totalCount">0</strong>
+        </article>
+        <article>
+          <span>Autônomos</span>
+          <strong id="autonomoCount">0</strong>
+        </article>
+        <article>
+          <span>Empregados</span>
+          <strong id="empregadoCount">0</strong>
+        </article>
+        <article>
+          <span>Transportadoras</span>
+          <strong id="transportadoraCount">0</strong>
+        </article>
+      </div>
+
+      <div class="adminToolbar">
+        <input id="searchInput" type="search" placeholder="Buscar por nome, WhatsApp, perfil ou comentário">
+        <button class="secondary" type="button" id="refreshButton">Atualizar</button>
+        <button class="primary" type="button" id="exportButton">Exportar CSV</button>
+      </div>
+
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Perfil</th>
+              <th>Nome</th>
+              <th>WhatsApp</th>
+              <th>Comentário</th>
+              <th>Respostas</th>
+            </tr>
+          </thead>
+          <tbody id="responsesBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="./admin.js"></script>
+</body>
+</html>
