@@ -65,6 +65,7 @@ const questions = [
   {
     id: "info_falta",
     text: "Qual informação mais costuma faltar em um frete?",
+    maxSelections: 2,
     options: [
       "Peso da carga",
       "Pedágio ou rota",
@@ -115,6 +116,7 @@ const shipperQuestions = [
   {
     id: "transportadora_encontra_motoristas",
     text: "Como vocês normalmente encontram motoristas?",
+    maxSelections: 2,
     options: [
       "WhatsApp",
       "Indicação",
@@ -148,6 +150,7 @@ const shipperQuestions = [
   {
     id: "transportadora_utilidade",
     text: "O que seria mais útil para sua operação?",
+    maxSelections: 2,
     options: [
       "Publicar fretes rapidamente",
       "Receber motoristas interessados",
@@ -183,6 +186,7 @@ const employeeQuestions = [
   {
     id: "empregado_decide_viagem",
     text: "Você tem liberdade para decidir algo na viagem?",
+    maxSelections: 2,
     options: [
       "Escolho rota",
       "Escolho onde abastecer",
@@ -347,9 +351,40 @@ function renderQuestion() {
     return;
   }
 
+  if (question.maxSelections) {
+    const selectedValues = Array.isArray(value) ? value : [];
+    questionCard.innerHTML = `
+      <span class="hint">Escolha até ${question.maxSelections} opções.</span>
+      <div class="options">
+        ${question.options.map((option) => `
+          <label class="option">
+            <input
+              type="checkbox"
+              name="${question.id}"
+              value="${option}"
+              ${selectedValues.includes(option) ? "checked" : ""}
+              ${selectedValues.length >= question.maxSelections && !selectedValues.includes(option) ? "disabled" : ""}
+            >
+            <span>${option}</span>
+          </label>
+        `).join("")}
+      </div>
+    `;
+
+    questionCard.querySelectorAll("input").forEach((input) => {
+      input.addEventListener("change", () => {
+        const selected = Array.from(questionCard.querySelectorAll("input:checked")).map((item) => item.value);
+        answers[question.id] = selected;
+        clearError();
+        renderQuestion();
+      });
+    });
+    return;
+  }
+
   questionCard.innerHTML = `
     <div class="options">
-      ${question.options.map((option, index) => `
+      ${question.options.map((option) => `
         <label class="option">
           <input
             type="radio"
@@ -390,6 +425,7 @@ function clearError() {
 function validateCurrent() {
   const question = getActiveQuestions()[current];
   if (question.optional) return true;
+  if (question.maxSelections) return Array.isArray(answers[question.id]) && answers[question.id].length > 0;
   return Boolean(answers[question.id]);
 }
 
