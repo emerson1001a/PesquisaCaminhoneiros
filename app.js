@@ -1,30 +1,39 @@
 const SUBMIT_URL = "/api/submit";
 
-const questions = [
-  {
-    id: "perfil_motorista",
-    text: "Você é:",
-    options: [
-      "Autônomo",
-      "Empregado",
-      "Transportadora"
-    ]
-  },
+// ─────────────────────────────────────────────
+// PERGUNTA DE SEGMENTAÇÃO (comum a todos)
+// ─────────────────────────────────────────────
+const perguntaInicial = {
+  id: "perfil_motorista",
+  texto: "Você é:",
+  opções: ["Autônomo", "Empregado", "Transportadora"]
+};
+
+// ─────────────────────────────────────────────
+// FLUXO: AUTÔNOMO
+// Alterações aplicadas:
+// - P5 (diesel_decisao) REMOVIDA — era redundante com custo_pesa
+// - P4 (custo_pesa) agora permite até 2 seleções
+// - P2 (primeiro_olhar): "Tempo que posso perder esperando" → "Prazo de carga e descarga"
+// - P9 (ajuda_antes): "Saber o custo total" → "Saber a reputação de quem oferece o frete"
+// - NOVAS: arrependimento_frete, controle_financeiro, recebimento_frete
+// ─────────────────────────────────────────────
+const perguntasAutonomo = [
   {
     id: "primeiro_olhar",
-    text: "Quando aparece um frete novo, qual é a primeira coisa que você olha?",
-    options: [
+    texto: "Quando aparece um frete novo, qual é a primeira coisa que você olha?",
+    opções: [
       "Valor do frete",
       "Distância da viagem",
       "Lugar de entrega",
       "Tipo ou peso da carga",
-      "Tempo que posso perder esperando"
+      "Prazo de carga e descarga"
     ]
   },
   {
     id: "decisao_frete",
-    text: "Como você decide se um frete vale a pena?",
-    options: [
+    texto: "Como você decide se um frete vale a pena?",
+    opções: [
       "Faço uma conta detalhada",
       "Faço uma conta por cima",
       "Vou pela experiência",
@@ -33,9 +42,20 @@ const questions = [
     ]
   },
   {
+    id: "arrependimento_frete",
+    texto: "Você já aceitou um frete e se arrependeu depois de fazer as contas?",
+    opções: [
+      "Sim, acontece com frequência",
+      "Sim, já aconteceu algumas vezes",
+      "Raramente",
+      "Nunca aconteceu"
+    ]
+  },
+  {
     id: "custo_pesa",
-    text: "Qual custo mais pesa no seu bolso?",
-    options: [
+    texto: "Quais custos mais pesam no seu bolso?",
+    maxSelections: 2,
+    opções: [
       "Diesel",
       "Pedágio",
       "Manutenção ou pneu",
@@ -43,19 +63,9 @@ const questions = [
     ]
   },
   {
-    id: "diesel_decisao",
-    text: "O preço do diesel muda sua decisão de aceitar um frete?",
-    options: [
-      "Sempre",
-      "Quase sempre",
-      "Só em viagem longa",
-      "Quase nunca"
-    ]
-  },
-  {
     id: "retorno",
-    text: "Como você lida com carga de retorno?",
-    options: [
+    texto: "Como você lida com carga de retorno?",
+    opções: [
       "Só aceito se já tiver retorno",
       "Procuro retorno no caminho",
       "Aceito e vejo depois",
@@ -64,9 +74,9 @@ const questions = [
   },
   {
     id: "info_falta",
-    text: "Qual informação mais costuma faltar em um frete?",
+    texto: "Qual informação mais costuma faltar em um frete?",
     maxSelections: 2,
-    options: [
+    opções: [
       "Peso da carga",
       "Pedágio ou rota",
       "Tempo de carga e descarga",
@@ -74,9 +84,29 @@ const questions = [
     ]
   },
   {
+    id: "controle_financeiro",
+    texto: "Você usa algo hoje para controlar seus ganhos e gastos?",
+    opções: [
+      "Sim, uso um aplicativo",
+      "Sim, uso planilha",
+      "Anoto no papel",
+      "Não controlo"
+    ]
+  },
+  {
+    id: "recebimento_frete",
+    texto: "Como você costuma receber pelo frete?",
+    opções: [
+      "No ato da entrega",
+      "Em até 7 dias",
+      "Entre 15 e 30 dias",
+      "Varia muito"
+    ]
+  },
+  {
     id: "onde_usaria",
-    text: "Se uma ferramenta ajudasse a conferir se um frete vale a pena, você usaria onde?",
-    options: [
+    texto: "Se uma ferramenta ajudasse a conferir se um frete vale a pena, você usaria onde?",
+    opções: [
       "WhatsApp",
       "Aplicativo no celular",
       "Site simples",
@@ -85,27 +115,86 @@ const questions = [
   },
   {
     id: "ajuda_antes",
-    text: "O que mais te ajudaria antes de aceitar um frete?",
-    options: [
+    texto: "O que mais te ajudaria antes de aceitar um frete?",
+    opções: [
       "Saber o lucro aproximado",
-      "Saber o custo total",
-      "Saber se tem retorno",
+      "Saber se tem retorno disponível",
+      "Saber a reputação de quem oferece o frete",
       "Saber se a rota é pesada"
     ]
-  },
-  {
-    id: "contato",
-    text: "Quer participar dos primeiros testes do Rode com Lucro?",
-    type: "contact",
-    optional: true
   }
 ];
 
-const shipperQuestions = [
+const perguntaAbertaAutonomo = {
+  id: "comentario_autonomo",
+  texto: "Quer contar qual é a maior dificuldade para conseguir bons fretes e ganhar melhor na estrada?",
+  tipo: "textarea",
+  opcional: true,
+  placeholder: "Ex.: frete baixo, falta de retorno, diesel caro, pedágio, espera, pouca informação..."
+};
+
+// ─────────────────────────────────────────────
+// FLUXO: EMPREGADO
+// Alterações aplicadas:
+// - Perguntas antigas SUBSTITUÍDAS por perguntas estratégicas
+// - Foco: intenção de virar autônomo, barreiras e percepção de ferramentas
+// ─────────────────────────────────────────────
+const perguntasEmpregado = [
+  {
+    id: "empregado_intencao_autonomo",
+    texto: "Você já pensou em trabalhar por conta própria como autônomo?",
+    opções: [
+      "Sim, é um plano",
+      "Sim, mas tenho medo",
+      "Já tentei e voltei",
+      "Não pretendo"
+    ]
+  },
+  {
+    id: "empregado_barreira_autonomo",
+    texto: "O que mais te impede (ou te impediu) de trabalhar como autônomo?",
+    opções: [
+      "Medo de ficar sem renda fixa",
+      "Não sei se consigo fretes suficientes",
+      "Não sei se vai compensar financeiramente",
+      "Caminhão próprio é caro",
+      "Burocracia e documentação"
+    ]
+  },
+  {
+    id: "empregado_ferramenta_empresa",
+    texto: "Se seu empregador usasse um app para gerenciar os fretes, você acharia isso:",
+    opções: [
+      "Ótimo, facilitaria meu trabalho",
+      "Indiferente",
+      "Dependeria do que ele faz",
+      "Prefiro o jeito atual"
+    ]
+  }
+];
+
+const perguntaAbertaEmpregado = {
+  id: "comentario_empregado",
+  texto: "Quer contar o que mais atrapalha seu dia a dia na estrada?",
+  tipo: "textarea",
+  opcional: true,
+  placeholder: "Ex.: rota ruim, parada insegura, espera, informação incompleta..."
+};
+
+// ─────────────────────────────────────────────
+// FLUXO: TRANSPORTADORA
+// Alterações aplicadas:
+// - P3 (transportadora_encontra_motoristas): adicionada opção "Grupos em redes sociais"
+// - P2 e P4 mantidas (angulações distintas o suficiente), mas P4 agora permite 2 seleções
+// - P6 (transportadora_utilidade) e P8 (transportadora_valor_plataforma): P6 removida
+//   para dar espaço à nova pergunta sobre disposição de pagamento
+// - NOVA: transportadora_pagaria e transportadora_tamanho_operacao
+// ─────────────────────────────────────────────
+const perguntasTransportadora = [
   {
     id: "transportadora_dificuldade",
-    text: "Qual é a maior dificuldade ao contratar motorista para um frete?",
-    options: [
+    texto: "Qual é a maior dificuldade ao contratar motorista para um frete?",
+    opções: [
       "Encontrar motorista disponível",
       "Confiar no motorista",
       "Negociar valor",
@@ -115,20 +204,22 @@ const shipperQuestions = [
   },
   {
     id: "transportadora_encontra_motoristas",
-    text: "Como vocês normalmente encontram motoristas?",
+    texto: "Como vocês normalmente encontram motoristas?",
     maxSelections: 2,
-    options: [
+    opções: [
       "WhatsApp",
       "Indicação",
       "Agenciador",
       "Plataformas de frete",
-      "Base própria de motoristas"
+      "Base própria de motoristas",
+      "Grupos em redes sociais"
     ]
   },
   {
     id: "transportadora_atraso",
-    text: "O que mais atrasa o fechamento de um frete?",
-    options: [
+    texto: "O que mais atrasa o fechamento de um frete?",
+    maxSelections: 2,
+    opções: [
       "Motorista demorando para responder",
       "Falta de informação do frete",
       "Negociação de preço",
@@ -138,8 +229,8 @@ const shipperQuestions = [
   },
   {
     id: "transportadora_confianca",
-    text: "O que faria você confiar mais em um motorista novo?",
-    options: [
+    texto: "O que faria você confiar mais em um motorista novo?",
+    opções: [
       "Histórico de fretes",
       "Avaliação de outros contratantes",
       "Documentos verificados",
@@ -148,21 +239,9 @@ const shipperQuestions = [
     ]
   },
   {
-    id: "transportadora_utilidade",
-    text: "O que seria mais útil para sua operação?",
-    maxSelections: 2,
-    options: [
-      "Publicar fretes rapidamente",
-      "Receber motoristas interessados",
-      "Ver motoristas por rota ou região",
-      "Organizar contatos no WhatsApp",
-      "Comparar motoristas por histórico ou reputação"
-    ]
-  },
-  {
     id: "transportadora_whatsapp",
-    text: "Hoje, o WhatsApp ajuda ou atrapalha a operação?",
-    options: [
+    texto: "Hoje, o WhatsApp ajuda ou atrapalha a operação?",
+    opções: [
       "Ajuda muito",
       "Ajuda, mas fica bagunçado",
       "Atrapalha pela quantidade de mensagens",
@@ -171,160 +250,168 @@ const shipperQuestions = [
   },
   {
     id: "transportadora_valor_plataforma",
-    text: "Qual seria o maior valor de uma plataforma para transportadoras?",
-    options: [
+    texto: "Qual seria o maior valor de uma plataforma para transportadoras?",
+    opções: [
       "Fechar fretes mais rápido",
       "Reduzir risco com motorista",
       "Organizar a operação",
       "Diminuir dependência de agenciador",
       "Ter histórico e controle"
     ]
-  }
-];
-
-const employeeQuestions = [
+  },
   {
-    id: "empregado_decide_viagem",
-    text: "Você tem liberdade para decidir algo na viagem?",
-    maxSelections: 2,
-    options: [
-      "Escolho rota",
-      "Escolho onde abastecer",
-      "Escolho paradas",
-      "Só sigo orientação da empresa"
+    id: "transportadora_pagaria",
+    texto: "Você pagaria por uma ferramenta que reduzisse o tempo de fechamento de frete e trouxesse motoristas confiáveis?",
+    opções: [
+      "Sim, com certeza",
+      "Sim, dependendo do preço",
+      "Talvez, precisaria testar",
+      "Não pagaria"
     ]
   },
   {
-    id: "empregado_ajuda_estrada",
-    text: "O que mais te ajudaria na estrada?",
-    options: [
-      "Combustível mais barato",
-      "Parada boa e segura",
-      "Rota melhor",
-      "Informação mais clara da viagem"
-    ]
-  },
-  {
-    id: "empregado_interesse_ferramenta",
-    text: "Se existisse uma ferramenta simples para ajudar motoristas na estrada, você gostaria de receber?",
-    options: [
-      "Sim, pelo WhatsApp",
-      "Sim, por aplicativo",
-      "Talvez",
-      "Não tenho interesse"
+    id: "transportadora_tamanho_operacao",
+    texto: "Quantos fretes vocês fecham por mês em média?",
+    opções: [
+      "Menos de 10",
+      "Entre 10 e 30",
+      "Entre 30 e 100",
+      "Mais de 100"
     ]
   }
 ];
 
-const driverQuestions = questions.slice(1, -1);
-const contactQuestion = questions[questions.length - 1];
-const autonomousOpenQuestion = {
-  id: "comentario_autonomo",
-  text: "Quer contar qual é a maior dificuldade para conseguir bons fretes e ganhar melhor na estrada?",
-  type: "textarea",
-  optional: true,
-  placeholder: "Ex.: frete baixo, falta de retorno, diesel caro, pedágio, espera, pouca informação..."
-};
-const employeeOpenQuestion = {
-  id: "comentario_empregado",
-  text: "Quer contar o que mais atrapalha seu dia a dia na estrada?",
-  type: "textarea",
-  optional: true,
-  placeholder: "Ex.: rota ruim, parada insegura, espera, informação incompleta..."
-};
-const shipperOpenQuestion = {
+const perguntaAbertaTransportadora = {
   id: "comentario_transportadora",
-  text: "Quer contar qual é a maior dificuldade para fechar fretes com bons motoristas?",
-  type: "textarea",
-  optional: true,
+  texto: "Quer contar qual é a maior dificuldade para fechar fretes com bons motoristas?",
+  tipo: "textarea",
+  opcional: true,
   placeholder: "Ex.: demora para responder, confiança, documentação, preço..."
 };
 
-function getActiveQuestions() {
-  let branch = [...driverQuestions, autonomousOpenQuestion];
+// ─────────────────────────────────────────────
+// PERGUNTA DE CONTATO (comum a todos)
+// ─────────────────────────────────────────────
+const perguntaContato = {
+  id: "contato",
+  texto: "Quer participar dos primeiros testes do Rode com Lucro?",
+  tipo: "contato",
+  opcional: true
+};
 
+// ─────────────────────────────────────────────
+// ROTEAMENTO DE FLUXO
+// ─────────────────────────────────────────────
+function getActiveQuestions() {
   if (answers.perfil_motorista === "Empregado") {
-    branch = [...employeeQuestions, employeeOpenQuestion];
+    return [
+      perguntaInicial,
+      ...perguntasEmpregado,
+      perguntaAbertaEmpregado,
+      perguntaContato
+    ];
   }
 
   if (answers.perfil_motorista === "Transportadora") {
-    branch = [...shipperQuestions, shipperOpenQuestion];
+    return [
+      perguntaInicial,
+      ...perguntasTransportadora,
+      perguntaAbertaTransportadora,
+      perguntaContato
+    ];
   }
 
-  return [questions[0], ...branch, contactQuestion];
+  // Padrão: Autônomo
+  return [
+    perguntaInicial,
+    ...perguntasAutonomo,
+    perguntaAbertaAutonomo,
+    perguntaContato
+  ];
 }
 
 function clearBranchAnswers() {
   [
-    ...driverQuestions,
-    autonomousOpenQuestion,
-    ...employeeQuestions,
-    employeeOpenQuestion,
-    ...shipperQuestions,
-    shipperOpenQuestion
-  ].forEach((question) => {
-    delete answers[question.id];
+    ...perguntasAutonomo,
+    perguntaAbertaAutonomo,
+    ...perguntasEmpregado,
+    perguntaAbertaEmpregado,
+    ...perguntasTransportadora,
+    perguntaAbertaTransportadora
+  ].forEach((q) => {
+    delete answers[q.id];
   });
 }
 
-const intro = document.getElementById("intro");
-const thanks = document.getElementById("thanks");
-const form = document.getElementById("surveyForm");
+// ─────────────────────────────────────────────
+// REFERÊNCIAS DOM
+// ─────────────────────────────────────────────
+const intro        = document.getElementById("intro");
+const thanks       = document.getElementById("thanks");
+const form         = document.getElementById("surveyForm");
 const questionCard = document.getElementById("questionCard");
 const questionTitle = document.getElementById("questionTitle");
 const progressText = document.getElementById("progressText");
-const progressBar = document.getElementById("progressBar");
-const startButton = document.getElementById("startButton");
-const backButton = document.getElementById("backButton");
-const nextButton = document.getElementById("nextButton");
-const againButton = document.getElementById("againButton");
+const progressBar  = document.getElementById("progressBar");
+const startButton  = document.getElementById("startButton");
+const backButton   = document.getElementById("backButton");
+const nextButton   = document.getElementById("nextButton");
+const againButton  = document.getElementById("againButton");
 
 let current = 0;
 let answers = {};
 let sending = false;
 
+// ─────────────────────────────────────────────
+// CONTROLE DE TELA
+// ─────────────────────────────────────────────
 function showScreen(screen) {
   intro.classList.toggle("hidden", screen !== "intro");
   form.classList.toggle("hidden", screen !== "form");
   thanks.classList.toggle("hidden", screen !== "thanks");
 }
 
+// ─────────────────────────────────────────────
+// RENDERIZAÇÃO DE PERGUNTAS
+// ─────────────────────────────────────────────
 function renderQuestion() {
   const activeQuestions = getActiveQuestions();
   const question = activeQuestions[current];
   const total = activeQuestions.length;
   const value = answers[question.id] || "";
 
-  questionTitle.textContent = question.text;
+  questionTitle.textContent = question.texto;
   progressText.textContent = `${current + 1}/${total}`;
   progressBar.style.width = `${((current + 1) / total) * 100}%`;
   backButton.disabled = current === 0 || sending;
   nextButton.textContent = current === total - 1 ? "Enviar" : "Continuar";
   nextButton.disabled = sending;
 
-  if (question.type === "textarea") {
+  // Pergunta aberta (textarea)
+  if (question.tipo === "textarea") {
     questionCard.innerHTML = `
       <div class="field">
-        <label for="${question.id}">${question.optional ? "Opcional" : "Resposta"}</label>
+        <label for="${question.id}">${question.opcional ? "Opcional" : "Resposta"}</label>
         <textarea id="${question.id}" placeholder="${question.placeholder || ""}">${value || ""}</textarea>
         <span class="hint">Pode deixar em branco se não quiser comentar.</span>
       </div>
     `;
-    document.getElementById(question.id).addEventListener("input", (event) => {
-      answers[question.id] = event.target.value.trim();
+    document.getElementById(question.id).addEventListener("input", (e) => {
+      answers[question.id] = e.target.value.trim();
     });
     return;
   }
 
-  if (question.type === "contact") {
+  // Pergunta de contato
+  if (question.tipo === "contato") {
     const contato = answers[question.id] || {};
-    const isShipper = answers.perfil_motorista === "Transportadora";
+    const isTransportadora = answers.perfil_motorista === "Transportadora";
     questionCard.innerHTML = `
       <div class="contactInvite">
         <strong>Quer acompanhar o projeto?</strong>
         <p>
           Sua resposta já ajudou. Se quiser, deixe seu WhatsApp para receber novidades e testar
-          o Rode com Lucro quando abrirmos para ${isShipper ? "transportadoras" : "motoristas"}.
+          o Rode com Lucro quando abrirmos para ${isTransportadora ? "transportadoras" : "motoristas"}.
         </p>
         <p>
           Não é obrigatório. O contato serve só para chamar quem quiser participar dos próximos passos.
@@ -351,29 +438,29 @@ function renderQuestion() {
     return;
   }
 
+  // Pergunta de múltipla escolha (checkbox)
   if (question.maxSelections) {
     const selectedValues = Array.isArray(value) ? value : [];
     questionCard.innerHTML = `
       <span class="hint">Escolha até ${question.maxSelections} opções.</span>
       <div class="options">
-        ${question.options.map((option) => `
+        ${question.opções.map((opcao) => `
           <label class="option">
             <input
               type="checkbox"
               name="${question.id}"
-              value="${option}"
-              ${selectedValues.includes(option) ? "checked" : ""}
-              ${selectedValues.length >= question.maxSelections && !selectedValues.includes(option) ? "disabled" : ""}
+              value="${opcao}"
+              ${selectedValues.includes(opcao) ? "checked" : ""}
+              ${selectedValues.length >= question.maxSelections && !selectedValues.includes(opcao) ? "disabled" : ""}
             >
-            <span>${option}</span>
+            <span>${opcao}</span>
           </label>
         `).join("")}
       </div>
     `;
-
     questionCard.querySelectorAll("input").forEach((input) => {
       input.addEventListener("change", () => {
-        const selected = Array.from(questionCard.querySelectorAll("input:checked")).map((item) => item.value);
+        const selected = Array.from(questionCard.querySelectorAll("input:checked")).map((i) => i.value);
         answers[question.id] = selected;
         clearError();
         renderQuestion();
@@ -382,22 +469,22 @@ function renderQuestion() {
     return;
   }
 
+  // Pergunta de escolha única (radio)
   questionCard.innerHTML = `
     <div class="options">
-      ${question.options.map((option) => `
+      ${question.opções.map((opcao) => `
         <label class="option">
           <input
             type="radio"
             name="${question.id}"
-            value="${option}"
-            ${value === option ? "checked" : ""}
+            value="${opcao}"
+            ${value === opcao ? "checked" : ""}
           >
-          <span>${option}</span>
+          <span>${opcao}</span>
         </label>
       `).join("")}
     </div>
   `;
-
   questionCard.querySelectorAll("input").forEach((input) => {
     input.addEventListener("change", () => {
       if (question.id === "perfil_motorista" && answers[question.id] !== input.value) {
@@ -409,6 +496,9 @@ function renderQuestion() {
   });
 }
 
+// ─────────────────────────────────────────────
+// VALIDAÇÃO E ERROS
+// ─────────────────────────────────────────────
 function showError(message) {
   clearError();
   const error = document.createElement("div");
@@ -424,32 +514,33 @@ function clearError() {
 
 function validateCurrent() {
   const question = getActiveQuestions()[current];
-  if (question.optional) return true;
+  if (question.opcional) return true;
   if (question.maxSelections) return Array.isArray(answers[question.id]) && answers[question.id].length > 0;
   return Boolean(answers[question.id]);
 }
 
-async function sendAnswers() {
+// ─────────────────────────────────────────────
+// ENVIO
+// ─────────────────────────────────────────────
+async function submitAnswers() {
   const contato = answers.contato || {};
   const comentario =
     answers.comentario_autonomo ||
     answers.comentario_empregado ||
     answers.comentario_transportadora ||
-    answers.comentario ||
     "";
+
   const payload = {
-    respostas: answers,
+    answers,
     comentario,
     nome: contato.nome || "",
     whatsapp: contato.whatsapp || "",
-    origem: "link_publico"
+    s: "link_publico"
   };
 
   const response = await fetch(SUBMIT_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 
@@ -462,6 +553,9 @@ async function sendAnswers() {
   return { savedLocally: false };
 }
 
+// ─────────────────────────────────────────────
+// EVENTOS
+// ─────────────────────────────────────────────
 startButton.addEventListener("click", () => {
   showScreen("form");
   renderQuestion();
@@ -492,7 +586,7 @@ nextButton.addEventListener("click", async () => {
     sending = true;
     nextButton.textContent = "Enviando...";
     nextButton.disabled = true;
-    await sendAnswers();
+    await submitAnswers();
     showScreen("thanks");
   } catch (error) {
     sending = false;
